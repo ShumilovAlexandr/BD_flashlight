@@ -1,0 +1,5 @@
+fastapi
+pandas
+websockets
+uvicorn
+pydantic

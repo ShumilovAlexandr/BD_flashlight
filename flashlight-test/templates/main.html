@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test</title>
+        <style>
+            #circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: white;
+            outline: 1px solid #000;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Фонарь</h1>
+        <div id="circle"></div>
+        <br>
+        <script>
+            var ws = new WebSocket('ws://127.0.0.1:9999/ws');
+            ws.onopen = function(event) {
+                console.log('WebSocket соединение установлено');
+            }
+
+            ws.onmessage = function(event) {
+                const message = JSON.parse(event.data);
+                const command = message.command;
+                const metadata = message.metadata;
+                const circle = document.getElementById('circle');
+                if (command === "ON") {
+                    console.log("Включение");
+                    circle.style.background = "yellow";
+                } else if (command === "OFF") {
+                    console.log("Выключение");
+                    circle.style.background = "white";
+                } else if (command === "COLOR") {
+                    if ('metadata' in message) {
+                        circle.style.background = metadata;
+                        console.log("Изменение цвета на", metadata);
+                    } else {
+                        console.log("Получено сообщение без метаданных");
+                    }
+                };
+            };
+
+            ws.onclose = function() {
+                console.log('WebSocket соединение закрыто');
+            };
+
+            ws.onerror = function(error) {
+                console.error('WebSocket ошибка:', error);
+            };
+        </script>
+    </body>
+</html>
